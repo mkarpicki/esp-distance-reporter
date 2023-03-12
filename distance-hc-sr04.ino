@@ -12,9 +12,9 @@
 * https://www.14core.com/wiring-esp8266-nodemcu-with-hcsr04-ultrasonic-sensor/
 */
 
+// NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
 #define TRIGGER 5
 #define ECHO    4 
-// NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
 
 // Wi-Fi Settings
 const char* ssid = WIFIConfig::ssid;
