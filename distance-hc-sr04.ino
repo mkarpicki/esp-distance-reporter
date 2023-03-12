@@ -10,6 +10,7 @@
 14CORE ULTRASONIC DISTANCE SENSOR CODE TEST
 ********************************************
 * https://www.14core.com/wiring-esp8266-nodemcu-with-hcsr04-ultrasonic-sensor/
+* https://lastminuteengineers.com/arduino-sr04-ultrasonic-sensor-tutorial/
 */
 
 // NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
@@ -74,13 +75,13 @@ bool WiFiconnect() {
 
 void sendToThingSpeak(long distance) {
 
-    float distanceInMeters = (float) (distance / 100); 
-    Serial.print("Meters:");
-    Serial.println(distanceInMeters);
+    //float distanceInMeters = (float) (distance / 100); 
+    //Serial.print("Meters:");
+    //Serial.println(distanceInMeters);
   
     ThingSpeak.begin(client);
-    ThingSpeak.setField(1, distanceInMeters);
-    //ThingSpeak.setField(1, distance);
+    //ThingSpeak.setField(1, distanceInMeters);
+    ThingSpeak.setField(1, distance);
 
     // write to the ThingSpeak channel
     int thingSpeakResponse = ThingSpeak.writeFields(channelID, writeAPIKey);
