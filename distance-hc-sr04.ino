@@ -16,6 +16,9 @@
 #define TRIGGER 5
 #define ECHO    4 
 
+#define D7 13
+#define D8 15
+
 // Wi-Fi Settings
 const char* ssid = WIFIConfig::ssid;
 const char* password = WIFIConfig::password;
@@ -87,9 +90,26 @@ void setup() {
   
   Serial.begin (115200);
 
+  ledPrepare();
+
   pinMode(TRIGGER, OUTPUT);
   pinMode(ECHO, INPUT);
 //  pinMode(BUILTIN_LED, OUTPUT);
+}
+
+void ledPrepare() {
+  pinMode(D7, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+  pinMode(D8, OUTPUT);
+}
+
+void ledOn() {
+  digitalWrite(D8, HIGH);
+  digitalWrite(D7, LOW);
+}
+
+void ledOff(){
+  digitalWrite(D7, HIGH);
+  digitalWrite(D8, LOW);  
 }
 
 void loop() {
@@ -123,8 +143,11 @@ void loop() {
   }
 
   if (isConnected) {
+    ledOn();
     sendToThingSpeak(distance);     
+  } else {
+    ledOff();
   }
-
+  
   delay(delayTime);
 }
