@@ -73,8 +73,14 @@ bool WiFiconnect() {
 }
 
 void sendToThingSpeak(long distance) {
+
+    float distanceInMeters = (float) (distance / 100); 
+    Serial.print("Meters:");
+    Serial.println(distanceInMeters);
+  
     ThingSpeak.begin(client);
-    ThingSpeak.setField(1, distance);
+    ThingSpeak.setField(1, distanceInMeters);
+    //ThingSpeak.setField(1, distance);
 
     // write to the ThingSpeak channel
     int thingSpeakResponse = ThingSpeak.writeFields(channelID, writeAPIKey);
@@ -114,7 +120,10 @@ void ledOff(){
 
 void loop() {
 
-  long duration, distance, delayTime = 1000 * 30;
+  long duration, 
+    distance, 
+    delayTime = 1000 * 30;
+ 
   bool isConnected = true;
 
   digitalWrite(TRIGGER, LOW);  
@@ -132,7 +141,7 @@ void loop() {
   
   distance = (duration/2) / 29.1;
   //distance= duration*0.034/2;
-  
+
   Serial.print("Centimeters:");
   Serial.println(distance);
 
