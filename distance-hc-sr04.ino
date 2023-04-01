@@ -1,10 +1,3 @@
-// my config libs
-#include <WIFIConfig.h>
-#include <ThingSpeakConfig.h>
-
-#include <ESP8266WiFi.h>
-#include <ThingSpeak.h>
-
 /*
 ********************************************
 14CORE ULTRASONIC DISTANCE SENSOR CODE TEST
@@ -17,116 +10,39 @@
 #define TRIGGER 5
 #define ECHO    4 
 
+#define D5 14
+#define D6 12
+
 #define D7 13
 #define D8 15
 
-// Wi-Fi Settings
-const char* ssid = WIFIConfig::ssid;
-const char* password = WIFIConfig::password;
-//bool wifiConnected = false;
-
-// ThingSpeak Settings
-const unsigned long channelID = ThingSpeakConfig::channelID;
-const char* writeAPIKey = ThingSpeakConfig::writeAPIKey;
-
-WiFiClient client;
-
-bool WiFiconnect() {
-
-  // Connect to Wifi.
-  Serial.println();
-  Serial.println();
-  Serial.print("Connecting to ");
-  
-  WiFi.begin(ssid, password);
-
-  // WiFi fix: https://github.com/esp8266/Arduino/issues/2186
-  WiFi.persistent(false);
-  WiFi.mode(WIFI_OFF);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  
-  unsigned long wifiConnectStart = millis();
-
-  while (WiFi.status() != WL_CONNECTED) {
-    // Check to see if
-    if (WiFi.status() == WL_CONNECT_FAILED) {
-      Serial.println("Failed to connect to WiFi. Please verify credentials: ");
-      delay(10000);
-    }
-
-    delay(500);
-    Serial.println("...");
-    // Only try for 5 seconds.
-    if (millis() - wifiConnectStart > 15000) {
-      Serial.println("Failed to connect to WiFi");
-      return false;
-    }
-  }
-  //wifiConnected = true;
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  return true;
-}
-
-void sendToThingSpeak(long distance) {
-
-    //float distanceInMeters = (float) (distance / 100); 
-    //Serial.print("Meters:");
-    //Serial.println(distanceInMeters);
-  
-    ThingSpeak.begin(client);
-    //ThingSpeak.setField(1, distanceInMeters);
-    ThingSpeak.setField(1, distance);
-
-    // write to the ThingSpeak channel
-    int thingSpeakResponse = ThingSpeak.writeFields(channelID, writeAPIKey);
-
-    if(thingSpeakResponse){
-      Serial.println("Channel update successful.");
-    } else{
-      Serial.println("Problem updating channel. HTTP error code " + String(thingSpeakResponse));
-    }
-}
+#define SAFE_DISTANCE 6
 
 void setup() {
   
   Serial.begin (115200);
 
-  ledPrepare();
-
+  //safeLEDPrepare();
+  //warningLEDPrepare();
+  //turnOnWarning();
+  
   pinMode(TRIGGER, OUTPUT);
   pinMode(ECHO, INPUT);
+  
 //  pinMode(BUILTIN_LED, OUTPUT);
 }
 
-void ledPrepare() {
+void safeLEDPrepare() {
   pinMode(D7, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
   pinMode(D8, OUTPUT);
-}
-
-void ledOn() {
-  digitalWrite(D8, HIGH);
-  digitalWrite(D7, LOW);
-}
-
-void ledOff(){
-  digitalWrite(D7, HIGH);
-  digitalWrite(D8, LOW);  
 }
 
 void loop() {
 
   long duration, 
     distance, 
-    delayTime = 1000 * 10;
+    delayTime = 1000 * 5;
  
-  bool isConnected = true;
-
   digitalWrite(TRIGGER, LOW);  
   delayMicroseconds(2); 
   
@@ -145,19 +61,48 @@ void loop() {
 
   Serial.print("Centimeters:");
   Serial.println(distance);
-
-  if (WiFi.status() != WL_CONNECTED) {
-    if (!WiFiconnect()) {
-      isConnected = false;     
-    }    
-  }
-
-  if (isConnected) {
-    ledOn();
-    sendToThingSpeak(distance);     
-  } else {
-    ledOff();
-  }
   
+//  if (distance < SAFE_DISTANCE) {
+//    turnOnWarning();  
+//  } else {
+//    turnOnSafe();  
+//  }
+
   delay(delayTime);
+}
+
+
+void safeLEDOn() {
+  digitalWrite(D8, HIGH);
+  digitalWrite(D7, LOW);
+}
+
+void safeLEDOff(){
+  digitalWrite(D7, HIGH);
+  digitalWrite(D8, LOW);  
+}
+
+void warningLEDPrepare() {
+  pinMode(D5, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+  pinMode(D6, OUTPUT);
+}
+
+void warningLEDOn() {
+  digitalWrite(D5, HIGH);
+  digitalWrite(D6, LOW);
+}
+
+void warningLEDOff(){
+  digitalWrite(D6, HIGH);
+  digitalWrite(D5, LOW);  
+}
+
+void turnOnWarning() {
+  safeLEDOff(); 
+  warningLEDOn(); 
+}
+
+void turnOnSafe() {
+  safeLEDOn();
+  warningLEDOff();
 }
