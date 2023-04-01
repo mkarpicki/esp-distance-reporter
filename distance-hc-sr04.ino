@@ -123,7 +123,7 @@ void loop() {
 
   long duration, 
     distance, 
-    delayTime = 1000 * 30;
+    delayTime = 1000 * 10;
  
   bool isConnected = true;
 
