@@ -16,14 +16,15 @@
 #define D7 13
 #define D8 15
 
-#define SAFE_DISTANCE 6
+#define SAFE_DISTANCE 200
+#define INTERVAL_TIME 1000
 
 void setup() {
   
   Serial.begin (115200);
 
-  //safeLEDPrepare();
-  //warningLEDPrepare();
+  safeLEDPrepare();
+  warningLEDPrepare();
   //turnOnWarning();
   
   pinMode(TRIGGER, OUTPUT);
@@ -32,16 +33,10 @@ void setup() {
 //  pinMode(BUILTIN_LED, OUTPUT);
 }
 
-void safeLEDPrepare() {
-  pinMode(D7, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
-  pinMode(D8, OUTPUT);
-}
-
 void loop() {
 
   long duration, 
-    distance, 
-    delayTime = 1000 * 5;
+    distance;
  
   digitalWrite(TRIGGER, LOW);  
   delayMicroseconds(2); 
@@ -62,24 +57,29 @@ void loop() {
   Serial.print("Centimeters:");
   Serial.println(distance);
   
-//  if (distance < SAFE_DISTANCE) {
-//    turnOnWarning();  
-//  } else {
-//    turnOnSafe();  
-//  }
+  if (distance < SAFE_DISTANCE) {
+    turnOnWarning();  
+  } else {
+    turnOnSafe();  
+  }
 
-  delay(delayTime);
+  delay(INTERVAL_TIME);
 }
 
 
 void safeLEDOn() {
-  digitalWrite(D8, HIGH);
-  digitalWrite(D7, LOW);
+  digitalWrite(D7, HIGH);
+  digitalWrite(D8, LOW);
 }
 
 void safeLEDOff(){
-  digitalWrite(D7, HIGH);
-  digitalWrite(D8, LOW);  
+  digitalWrite(D8, HIGH);
+  digitalWrite(D7, LOW);  
+}
+
+void safeLEDPrepare() {
+  pinMode(D7, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+  pinMode(D8, OUTPUT);
 }
 
 void warningLEDPrepare() {
@@ -87,14 +87,14 @@ void warningLEDPrepare() {
   pinMode(D6, OUTPUT);
 }
 
-void warningLEDOn() {
-  digitalWrite(D5, HIGH);
-  digitalWrite(D6, LOW);
+void warningLEDOff() {
+  digitalWrite(D6, HIGH);
+  digitalWrite(D5, LOW);
 }
 
-void warningLEDOff(){
-  digitalWrite(D6, HIGH);
-  digitalWrite(D5, LOW);  
+void warningLEDOn(){
+  digitalWrite(D5, HIGH);
+  digitalWrite(D6, LOW);  
 }
 
 void turnOnWarning() {
