@@ -23,10 +23,9 @@ void setup() {
   
   Serial.begin (115200);
 
-  safeLEDPrepare();
+  //safeLEDPrepare();
   warningLEDPrepare();
-  //turnOnWarning();
-  
+
   pinMode(TRIGGER, OUTPUT);
   pinMode(ECHO, INPUT);
   
@@ -58,9 +57,11 @@ void loop() {
   Serial.println(distance);
   
   if (distance < SAFE_DISTANCE) {
-    turnOnWarning();  
+    //turnOnWarning(); 
+    warningLEDOn(); 
   } else {
-    turnOnSafe();  
+    //turnOnSafe(); 
+    warningLEDOff(); 
   }
 
   delay(INTERVAL_TIME);
