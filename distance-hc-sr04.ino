@@ -48,6 +48,12 @@ bool WiFiconnect() {
   
   unsigned long wifiConnectStart = millis();
 
+  Serial.print("Connecting to: ");
+  Serial.println(ssid);
+
+  Serial.print("channelID: ");
+  Serial.println(channelID);
+
   while (WiFi.status() != WL_CONNECTED) {
     // Check to see if
     if (WiFi.status() == WL_CONNECT_FAILED) {
@@ -102,6 +108,7 @@ void setup() {
   pinMode(TRIGGER, OUTPUT);
   pinMode(ECHO, INPUT);
 //  pinMode(BUILTIN_LED, OUTPUT);
+
 }
 
 void ledPrepare() {
